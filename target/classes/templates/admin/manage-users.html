@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage Users')}"></head>
+<body class="bg-light">
+
+    <!-- Shared Navigation -->
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <!-- Main Content Grid -->
+    <div class="container-fluid py-4">
+        <div class="row">
+            
+            <!-- Shared Sidebar -->
+            <div th:replace="~{fragments :: sidebar('manage-users')}"></div>
+            
+            <!-- Users Content -->
+            <main class="col-lg-9 col-md-8 px-md-4">
+                
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-4 border-bottom">
+                    <div>
+                        <h1 class="h2 fw-bold mb-1">Manage Registered Users</h1>
+                        <p class="text-muted">Monitor logins, check registration times, and review worker territories.</p>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="glass-card bg-white p-4 border border-light shadow-sm animate-fade-in">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-people-fill text-success me-2"></i>System User List</h5>
+                        <span class="badge bg-success rounded-pill px-3 py-1 font-monospace" th:text="${#lists.size(users)} + ' Registered'">0 Registered</span>
+                    </div>
+
+                    <div class="table-responsive" th:if="${not #lists.isEmpty(users)}">
+                        <table class="table custom-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Name</th>
+                                    <th>Email / Login</th>
+                                    <th>Phone Number</th>
+                                    <th>Role Badge</th>
+                                    <th>Address / Territory Area</th>
+                                    <th>Created Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u : ${users}">
+                                    <!-- ID -->
+                                    <td class="font-monospace fw-bold text-dark" th:text="'UID-' + ${u.id}">UID-01</td>
+                                    
+                                    <!-- Name -->
+                                    <td class="fw-bold text-dark" th:text="${u.name}">User Name</td>
+                                    
+                                    <!-- Email -->
+                                    <td class="font-monospace text-muted" th:text="${u.email}">user@example.com</td>
+                                    
+                                    <!-- Phone -->
+                                    <td th:text="${u.phone}">9876543210</td>
+                                    
+                                    <!-- Role -->
+                                    <td>
+                                        <span class="badge bg-success rounded-pill px-3 py-1" th:if="${u.role == 'ROLE_ADMIN'}">Admin</span>
+                                        <span class="badge bg-primary rounded-pill px-3 py-1" th:if="${u.role == 'ROLE_CITIZEN'}">Citizen</span>
+                                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1" th:if="${u.role == 'ROLE_WORKER'}">Worker</span>
+                                    </td>
+                                    
+                                    <!-- Address / Zone -->
+                                    <td>
+                                        <div th:if="${u.role == 'ROLE_WORKER'}">
+                                            <span class="text-success fw-bold"><i class="bi bi-geo-alt-fill"></i> Area: </span>
+                                            <span th:text="${u.assignedArea != null ? u.assignedArea : 'None'}">North Ward</span>
+                                        </div>
+                                        <div th:if="${u.role != 'ROLE_WORKER'}">
+                                            <small class="text-muted" th:text="${u.address != null && !u.address.isEmpty()} ? ${u.address} : 'No address'"></small>
+                                        </div>
+                                    </td>
+                                    
+                                    <!-- Created At -->
+                                    <td th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy, hh:mm a')}">Date</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments :: footer}"></footer>
+
+</body>
+</html>
